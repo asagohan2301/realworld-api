@@ -47,3 +47,4 @@ end
 
 gem "mysql2"
 gem "bcrypt"
+gem "jwt"
