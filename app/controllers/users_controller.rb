@@ -23,6 +23,7 @@ class UsersController < ApplicationController
       data = {
         user: {
           username: user.username,
+          email: user.email,
           token: token
         }
       }
