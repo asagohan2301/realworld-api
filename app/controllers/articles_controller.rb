@@ -81,6 +81,26 @@ class ArticlesController < ApplicationController
     end
   end
 
+  def destroy
+    article = Article.find_by(slug: params[:slug])
+
+    unless article
+      render json: { error: "Article not found." }, status: :not_found
+      return
+    end
+
+    unless @user.id == article.user_id
+      render json: { error: "You are not authorized to perform this action." }, status: :forbidden
+      return
+    end
+
+    if article.destroy
+      head :no_content
+    else
+      render json: { error: "Internal server error." }, status: :internal_server_error
+    end
+  end
+
   private
 
     def authenticate_user
