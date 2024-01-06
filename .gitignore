@@ -21,7 +21,7 @@ doc/
 /vendor/bundle
 
 # Ignore application's specific configuration file
-/config/credentials.yml.enc
+# /config/credentials.yml.enc
 /config/master.key
 
 # Ignore files related to IDE
