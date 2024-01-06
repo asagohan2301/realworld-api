@@ -6,14 +6,16 @@ class ArticlesController < ApplicationController
     if article.save
       data = {
         article: {
-          id: article.id,
+          slug: article.slug,
           title: article.title,
           description: article.description,
           body: article.body,
           tag_list: article.tag_list,
           created_at: article.created_at,
           updated_at: article.updated_at,
-          author: @user.username
+          author: {
+            username: @user.username
+          }
         }
       }
       render json: data, status: :created
