@@ -47,6 +47,40 @@ class ArticlesController < ApplicationController
     end
   end
 
+  def update
+    article = Article.find_by(slug: params[:slug])
+
+    unless article
+      render json: { error: "Article not found." }, status: :not_found
+      return
+    end
+
+    unless @user.id == article.user_id
+      render json: { error: "You are not authorized to perform this action." }, status: :forbidden
+      return
+    end
+    
+    if article.update(article_params)
+      data = {
+        article: {
+          slug: article.slug,
+          title: article.title,
+          description: article.description,
+          body: article.body,
+          tag_list: article.tag_list,
+          created_at: article.created_at,
+          updated_at: article.updated_at,
+          author: {
+            username: article.user.username
+          }
+        }
+      }
+      render json: data, status: :ok
+    else
+      render json: { error: article.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
     def authenticate_user
