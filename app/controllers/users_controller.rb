@@ -18,7 +18,7 @@ class UsersController < ApplicationController
     user = User.find_by(email: login_params[:email])
     if user && user.authenticate(login_params[:password])
       payload = { id: user.id }
-      secret = "test_secret_key"
+      secret = Rails.application.credentials.jwt_secret_key
       token = JWT.encode payload, secret, "HS256"
       data = {
         user: {

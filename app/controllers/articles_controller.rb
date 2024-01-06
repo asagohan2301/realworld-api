@@ -26,7 +26,7 @@ class ArticlesController < ApplicationController
 
     def authenticate_user
       begin
-        secret = "test_secret_key"
+        secret = Rails.application.credentials.jwt_secret_key
         token = request.headers['Authorization'].split(" ").last
         decoded_token = JWT.decode token, secret, true, { algorithm: 'HS256' }
         id_hash = decoded_token.find { |h| h.key?("id") }
