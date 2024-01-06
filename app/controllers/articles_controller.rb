@@ -24,6 +24,29 @@ class ArticlesController < ApplicationController
     end
   end
 
+  def show
+    article = Article.find_by(slug: params[:slug])
+    if article
+      data = {
+        article: {
+          slug: article.slug,
+          title: article.title,
+          description: article.description,
+          body: article.body,
+          tag_list: article.tag_list,
+          created_at: article.created_at,
+          updated_at: article.updated_at,
+          author: {
+            username: article.user.username
+          }
+        }
+      }
+      render json: data, status: :ok
+    else
+      render json: { error: "Article not found." }, status: :not_found
+    end
+  end
+
   private
 
     def authenticate_user
