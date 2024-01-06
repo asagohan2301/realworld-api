@@ -1,100 +1,35 @@
 class ArticlesController < ApplicationController
   before_action :authenticate_user, only: [:create, :update, :destroy]
+  before_action :set_article, only: [:show, :update, :destroy]
+  before_action :authenticate_article, only: [:update, :destroy]
 
   def create
     article = @user.articles.build(article_params)
     if article.save
-      data = {
-        article: {
-          slug: article.slug,
-          title: article.title,
-          description: article.description,
-          body: article.body,
-          tag_list: article.tag_list,
-          created_at: article.created_at,
-          updated_at: article.updated_at,
-          author: {
-            username: @user.username
-          }
-        }
-      }
-      render json: data, status: :created
+      render json: format_article_response(article), status: :created
     else
       render json: { error: article.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def show
-    article = Article.find_by(slug: params[:slug])
-    if article
-      data = {
-        article: {
-          slug: article.slug,
-          title: article.title,
-          description: article.description,
-          body: article.body,
-          tag_list: article.tag_list,
-          created_at: article.created_at,
-          updated_at: article.updated_at,
-          author: {
-            username: article.user.username
-          }
-        }
-      }
-      render json: data, status: :ok
+    if @article
+      render json: format_article_response(@article), status: :ok
     else
       render json: { error: "Article not found." }, status: :not_found
     end
   end
 
   def update
-    article = Article.find_by(slug: params[:slug])
-
-    unless article
-      render json: { error: "Article not found." }, status: :not_found
-      return
-    end
-
-    unless @user.id == article.user_id
-      render json: { error: "You are not authorized to perform this action." }, status: :forbidden
-      return
-    end
-    
-    if article.update(article_params)
-      data = {
-        article: {
-          slug: article.slug,
-          title: article.title,
-          description: article.description,
-          body: article.body,
-          tag_list: article.tag_list,
-          created_at: article.created_at,
-          updated_at: article.updated_at,
-          author: {
-            username: article.user.username
-          }
-        }
-      }
-      render json: data, status: :ok
+    if @article.update(article_params)
+      render json: format_article_response(@article), status: :ok
     else
-      render json: { error: article.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: @article.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    article = Article.find_by(slug: params[:slug])
-
-    unless article
-      render json: { error: "Article not found." }, status: :not_found
-      return
-    end
-
-    unless @user.id == article.user_id
-      render json: { error: "You are not authorized to perform this action." }, status: :forbidden
-      return
-    end
-
-    if article.destroy
+    if @article.destroy
       head :no_content
     else
       render json: { error: "Internal server error." }, status: :internal_server_error
@@ -112,6 +47,39 @@ class ArticlesController < ApplicationController
         @user = User.find(id_hash["id"])
       rescue JWT::DecodeError, ActiveRecord::RecordNotFound
         render json: { error: "Invalid token or user not found." }, status: :unauthorized
+        return
+      end
+    end
+
+    def set_article
+      @article = Article.find_by(slug: params[:slug])
+    end
+
+    def format_article_response(article)
+      {
+        article: {
+          slug: article.slug,
+          title: article.title,
+          description: article.description,
+          body: article.body,
+          tag_list: article.tag_list,
+          created_at: article.created_at,
+          updated_at: article.updated_at,
+          author: {
+            username: article.user.username
+          }
+        }
+      }
+    end
+
+    def authenticate_article
+      unless @article
+        render json: { error: "Article not found." }, status: :not_found
+        return
+      end
+  
+      unless @user.id == @article.user_id
+        render json: { error: "You are not authorized to perform this action." }, status: :forbidden
         return
       end
     end
