@@ -10,7 +10,7 @@ class UsersController < ApplicationController
       }
       render json: data, status: :created
     else
-      render json: { error: user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class UsersController < ApplicationController
       }
       render json: data, status: :ok
     else
-      render json: { error: "Authentication failed." }, status: :unauthorized
+      render json: { errors: ["Authentication failed"] }, status: :unauthorized
     end
   end
 

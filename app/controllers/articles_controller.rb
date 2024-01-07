@@ -8,7 +8,7 @@ class ArticlesController < ApplicationController
     if article.save
       render json: format_article_response(article), status: :created
     else
-      render json: { error: article.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: article.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -16,7 +16,7 @@ class ArticlesController < ApplicationController
     if @article
       render json: format_article_response(@article), status: :ok
     else
-      render json: { error: "Article not found." }, status: :not_found
+      render json: { errors: ["Article not found"] }, status: :not_found
     end
   end
 
@@ -24,7 +24,7 @@ class ArticlesController < ApplicationController
     if @article.update(article_params)
       render json: format_article_response(@article), status: :ok
     else
-      render json: { error: @article.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -32,7 +32,7 @@ class ArticlesController < ApplicationController
     if @article.destroy
       head :no_content
     else
-      render json: { error: "Internal server error." }, status: :internal_server_error
+      render json: { errors: ["Internal server error"] }, status: :internal_server_error
     end
   end
 
@@ -46,7 +46,7 @@ class ArticlesController < ApplicationController
         id_hash = decoded_token.find { |h| h.key?("id") }
         @user = User.find(id_hash["id"])
       rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-        render json: { error: "Invalid token or user not found." }, status: :unauthorized
+        render json: { errors: ["Invalid token or user not found"] }, status: :unauthorized
         return
       end
     end
@@ -74,12 +74,12 @@ class ArticlesController < ApplicationController
 
     def authenticate_article
       unless @article
-        render json: { error: "Article not found." }, status: :not_found
+        render json: { errors: ["Article not found"] }, status: :not_found
         return
       end
   
       unless @user.id == @article.user_id
-        render json: { error: "You are not authorized to perform this action." }, status: :forbidden
+        render json: { errors: ["You are not authorized to perform this action"] }, status: :forbidden
         return
       end
     end
