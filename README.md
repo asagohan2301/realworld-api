@@ -3,7 +3,7 @@
 ## 概要
 
 ブログプラットフォームを作る [RealWorld](https://github.com/gothinkster/realworld/tree/main) という OSS のプロジェクトがあります。  
-本リポジトリは、[RealWorld の バックエンドの API](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction) の仕様を Rails で作成したものです。  
+本リポジトリは、[RealWorld の バックエンドの API](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction) の仕様を Rails で作成したものです。
 
 ## 機能
 
@@ -11,7 +11,7 @@
 
 - ユーザー登録
 - ログイン
-- 記事の投稿、表示、更新、削除
+- 記事の投稿、取得、更新、削除
 
 ### 未実装
 
@@ -23,7 +23,7 @@
 
 #### 1-1. ユーザーを登録する
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 POST http://localhost:3000/api/users
@@ -31,15 +31,15 @@ POST http://localhost:3000/api/users
 
 リクエストヘッダー：
 
-**Content-Type**： application/json  
+**Content-Type**： application/json
 
 リクエストボディ：
 
 **username** `String`：ユーザー名  
 **email** `String`：メールアドレス  
-**password** `String`：パスワード  
+**password** `String`：パスワード
 
-リクエストの例：  
+リクエストの例：
 
 ```json
 {
@@ -51,14 +51,14 @@ POST http://localhost:3000/api/users
 }
 ```
 
-レスポンス：  
+レスポンス：
 
-HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。
 
 **username** `String`：登録されたユーザー名  
-**email** `String`：登録されたメールアドレス  
+**email** `String`：登録されたメールアドレス
 
-レスポンスの例：  
+レスポンスの例：
 
 ```json
 {
@@ -69,13 +69,13 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 }
 ```
 
-エラーレスポンス：  
+エラーレスポンス：
 
-バリデーションエラーの際は、HTTPステータスコード `422 Unprocessable Entity` と、以下の情報を含むJSONオブジェクトを返します。  
+バリデーションエラーの際は、HTTPステータスコード `422 Unprocessable Entity` と、以下の情報を含むJSONオブジェクトを返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+**errors** `Array<String>`：エラーメッセージの配列
 
-エラーレスポンスの例：  
+エラーレスポンスの例：
 
 ```json
 {
@@ -89,9 +89,9 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 #### 1-2. ログインする (トークンを発行する)
 
 登録済みのメールアドレスとパスワードでログインしてください。  
-ログインに成功するとトークンが発行されます。  
+ログインに成功するとトークンが発行されます。
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 POST http://localhost:3000/api/users/login
@@ -99,14 +99,14 @@ POST http://localhost:3000/api/users/login
 
 リクエストヘッダー：
 
-**Content-Type**： application/json  
+**Content-Type**： application/json
 
 リクエストボディ：
 
 **email** `String`：登録済みのメールアドレス  
-**password** `String`：登録済みのパスワード  
+**password** `String`：登録済みのパスワード
 
-リクエストの例：  
+リクエストの例：
 
 ```json
 {
@@ -117,15 +117,15 @@ POST http://localhost:3000/api/users/login
 }
 ```
 
-レスポンス：  
+レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
 
 **username** `String`：登録済みのユーザー名  
 **email** `String`：登録済みのメールアドレス  
-**token** `String`：発行されたトークン  
+**token** `String`：発行されたトークン
 
-レスポンスの例：  
+レスポンスの例：
 
 ```json
 {
@@ -137,13 +137,13 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 }
 ```
 
-エラーレスポンス：  
+エラーレスポンス：
 
-ログインに失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+ログインに失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+**errors** `Array<String>`：エラーメッセージの配列
 
-エラーレスポンスの例：  
+エラーレスポンスの例：
 
 ```json
 {
@@ -157,11 +157,11 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 #### 2-1. 記事を投稿する
 
-概要：  
+概要：
 
-記事を投稿するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
+記事を投稿するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 POST http://localhost:3000/api/articles
@@ -170,16 +170,16 @@ POST http://localhost:3000/api/articles
 リクエストヘッダー：
 
 **Content-Type**： application/json  
-**Authorization**： Bearer <トークン>  
+**Authorization**： Bearer <トークン>
 
 リクエストボディ：
 
 **title** `String`：記事タイトル  
 **description** `String`：記事概要  
 **body** `Text`：記事本文  
-**tag_list** `Array<String>`：記事につけるタグの配列  
+**tag_list** `Array<String>`：記事につけるタグの配列
 
-リクエストの例：  
+リクエストの例：
 
 ```json
 {
@@ -192,9 +192,9 @@ POST http://localhost:3000/api/articles
 }
 ```
 
-レスポンス：  
+レスポンス：
 
-HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。
 
 **slug** `String`：投稿された記事のスラッグ  
 **title** `String`：投稿された記事タイトル  
@@ -204,9 +204,9 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 **created_at** `DateTime`：記事が投稿された日時  
 **updated_at** `DateTime`：記事が更新された日時  
 **author** `Array<String>`：記事の投稿者情報  
-**username** `Array<String>`：記事の投稿者名  
+**username** `Array<String>`：記事の投稿者名
 
-レスポンスの例：  
+レスポンスの例：
 
 ```json
 {
@@ -225,13 +225,13 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 }
 ```
 
-エラーレスポンス：  
+エラーレスポンス：
 
-ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+**errors** `Array<String>`：エラーメッセージの配列
 
-エラーレスポンスの例：  
+エラーレスポンスの例：
 
 ```json
 {
@@ -241,21 +241,21 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 }
 ```
 
-#### 2-2. 記事を表示する  
+#### 2-2. 記事を取得する
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 GET http://localhost:3000/api/articles/:slug
 ```
 
-パスパラメータ：  
+パスパラメータ：
 
-**slug**：表示する記事のスラッグ
+**slug**：取得する記事のスラッグ
 
-レスポンス：  
+レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
 
 **slug** `String`：記事のスラッグ  
 **title** `String`：記事タイトル  
@@ -265,9 +265,9 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 **created_at** `DateTime`：記事が投稿された日時  
 **updated_at** `DateTime`：記事が更新された日時  
 **author** `Array<String>`：記事の投稿者情報  
-**username** `Array<String>`：記事の投稿者名  
+**username** `Array<String>`：記事の投稿者名
 
-レスポンスの例：  
+レスポンスの例：
 
 ```json
 {
@@ -286,13 +286,13 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 }
 ```
 
-エラーレスポンス：  
+エラーレスポンス：
 
-記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。  
+記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+**errors** `Array<String>`：エラーメッセージの配列
 
-エラーレスポンスの例：  
+エラーレスポンスの例：
 
 ```json
 {
@@ -304,25 +304,25 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 #### 2-3. 記事を更新する
 
-概要：  
+概要：
 
 記事を更新するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
 また、記事の投稿者本人しか更新できません。
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 PUT http://localhost:3000/api/articles/:slug
 ```
 
-パスパラメータ：  
+パスパラメータ：
 
 **slug**：更新する記事のスラッグ
 
 リクエストヘッダー：
 
 **Content-Type**： application/json  
-**Authorization**： Bearer <トークン>  
+**Authorization**： Bearer <トークン>
 
 リクエストボディ：
 
@@ -331,9 +331,9 @@ PUT http://localhost:3000/api/articles/:slug
 **title** `String`：記事タイトル  
 **description** `String`：記事概要  
 **body** `Text`：記事本文  
-**tag_list** `Array<String>`：記事につけるタグの配列  
+**tag_list** `Array<String>`：記事につけるタグの配列
 
-リクエストの例：  
+リクエストの例：
 
 ```json
 {
@@ -343,9 +343,9 @@ PUT http://localhost:3000/api/articles/:slug
 }
 ```
 
-レスポンス：  
+レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
 
 **slug** `String`：更新された記事のスラッグ  
 **title** `String`：更新された記事タイトル  
@@ -355,9 +355,9 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 **created_at** `DateTime`：記事が投稿された日時  
 **updated_at** `DateTime`：記事が更新された日時  
 **author** `Array<String>`：記事の投稿者情報  
-**username** `Array<String>`：記事の投稿者名  
+**username** `Array<String>`：記事の投稿者名
 
-レスポンスの例：  
+レスポンスの例：
 
 ```json
 {
@@ -376,15 +376,15 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 }
 ```
 
-エラーレスポンス：  
+エラーレスポンス：
 
-- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
-- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。 
-- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。  
+- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
+- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
+- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+**errors** `Array<String>`：エラーメッセージの配列
 
-エラーレスポンスの例：  
+エラーレスポンスの例：
 
 ```json
 {
@@ -396,34 +396,38 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 #### 2-4. 記事を削除する
 
-概要：  
+概要：
 
 記事を削除するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
 また、記事の投稿者本人しか削除できません。
 
-エンドポイント：  
+エンドポイント：
 
 ```bash
 DELETE http://localhost:3000/api/articles/:slug
 ```
 
-パスパラメータ：  
+パスパラメータ：
 
 **slug**：削除する記事のスラッグ
 
-レスポンス：  
+リクエストヘッダー：
 
-HTTPステータスコード `204 No Content` を返します。  
+**Authorization**： Bearer <トークン>
 
-エラーレスポンス：  
+レスポンス：
 
-- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
-- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。 
-- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。  
+HTTPステータスコード `204 No Content` を返します。
 
-**errors** `Array<String>`：エラーメッセージの配列  
+エラーレスポンス：
 
-エラーレスポンスの例：  
+- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
+- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
+- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。
+
+**errors** `Array<String>`：エラーメッセージの配列
+
+エラーレスポンスの例：
 
 ```json
 {
