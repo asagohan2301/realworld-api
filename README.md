@@ -1,24 +1,434 @@
-# README
+# RealWorld API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 概要
 
-Things you may want to cover:
+ブログプラットフォームを作る [RealWorld](https://github.com/gothinkster/realworld/tree/main) という OSS のプロジェクトがあります。  
+本リポジトリは、[RealWorld の バックエンドの API](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction) の仕様を Rails で作成したものです。  
 
-* Ruby version
+## 機能
 
-* System dependencies
+### 実装済み
 
-* Configuration
+- ユーザー登録
+- ログイン
+- 記事の投稿、表示、更新、削除
 
-* Database creation
+### 未実装
 
-* Database initialization
+- お気に入り
 
-* How to run the test suite
+## API 設計
 
-* Services (job queues, cache servers, search engines, etc.)
+### 1. ユーザー
 
-* Deployment instructions
+#### 1-1. ユーザーを登録する
 
-* ...
+エンドポイント：  
+
+```bash
+POST http://localhost:3000/api/users
+```
+
+リクエストヘッダー：
+
+**Content-Type**： application/json  
+
+リクエストボディ：
+
+**username** `String`：ユーザー名  
+**email** `String`：メールアドレス  
+**password** `String`：パスワード  
+
+リクエストの例：  
+
+```json
+{
+  "user": {
+    "username": "Jacob",
+    "email": "jake@jake.jake",
+    "password": "jakejake"
+  }
+}
+```
+
+レスポンス：  
+
+HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**username** `String`：登録されたユーザー名  
+**email** `String`：登録されたメールアドレス  
+
+レスポンスの例：  
+
+```json
+{
+  "user": {
+    "username": "Jacob",
+    "email": "jake@jake.jake"
+  }
+}
+```
+
+エラーレスポンス：  
+
+バリデーションエラーの際は、HTTPステータスコード `422 Unprocessable Entity` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "Username can't be blank",
+    "Email can't be blank"
+  ]
+}
+```
+
+#### 1-2. ログインする (トークンを発行する)
+
+登録済みのメールアドレスとパスワードでログインしてください。  
+ログインに成功するとトークンが発行されます。  
+
+エンドポイント：  
+
+```bash
+POST http://localhost:3000/api/users/login
+``` 
+
+リクエストヘッダー：
+
+**Content-Type**： application/json  
+
+リクエストボディ：
+
+**email** `String`：登録済みのメールアドレス  
+**password** `String`：登録済みのパスワード  
+
+リクエストの例：  
+
+```json
+{
+  "user": {
+    "email": "jake@jake.jake",
+    "password": "jakejake"
+  }
+}
+```
+
+レスポンス：  
+
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**username** `String`：登録済みのユーザー名  
+**email** `String`：登録済みのメールアドレス  
+**token** `String`：発行されたトークン  
+
+レスポンスの例：  
+
+```json
+{
+  "user": {
+    "username": "Jacob",
+    "email": "jake@jake.jake",
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTJ9.SZqlT7WhQJiiNmzjttXvcVtVhUAd45ZkYZY2ZggiiKc"
+  }
+}
+```
+
+エラーレスポンス：  
+
+ログインに失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "Authentication failed"
+  ]
+}
+```
+
+### 2. 記事
+
+#### 2-1. 記事を投稿する
+
+概要：  
+
+記事を投稿するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
+
+エンドポイント：  
+
+```bash
+POST http://localhost:3000/api/articles
+```
+
+リクエストヘッダー：
+
+**Content-Type**： application/json  
+**Authorization**： Bearer <トークン>  
+
+リクエストボディ：
+
+**title** `String`：記事タイトル  
+**description** `String`：記事概要  
+**body** `Text`：記事本文  
+**tag_list** `Array<String>`：記事につけるタグの配列  
+
+リクエストの例：  
+
+```json
+{
+  "article": {
+    "title": "How to train your dragon",
+    "description": "Ever wonder how?",
+    "body": "You have to believe",
+    "tag_list": ["reactjs", "angularjs", "dragons"]
+  }
+}
+```
+
+レスポンス：  
+
+HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**slug** `String`：投稿された記事のスラッグ  
+**title** `String`：投稿された記事タイトル  
+**description** `String`：投稿された記事概要  
+**body** `Text`：投稿された記事本文  
+**tag_list** `Array<String>`：投稿された記事のタグの配列  
+**created_at** `DateTime`：記事が投稿された日時  
+**updated_at** `DateTime`：記事が更新された日時  
+**author** `Array<String>`：記事の投稿者情報  
+**username** `Array<String>`：記事の投稿者名  
+
+レスポンスの例：  
+
+```json
+{
+  "article": {
+    "slug": "how-to-train-your-dragon",
+    "title": "How to train your dragon",
+    "description": "Ever wonder how?",
+    "body": "You have to believe",
+    "tag_list": ["reactjs", "angularjs", "dragons"],
+    "created_at": "2024-01-07T04:39:09.152Z",
+    "updated_at": "2024-01-07T04:39:09.152Z",
+    "author": {
+      "username": "Jacob"
+    }
+  }
+}
+```
+
+エラーレスポンス：  
+
+ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "Invalid token or user not found"
+  ]
+}
+```
+
+#### 2-2. 記事を表示する  
+
+エンドポイント：  
+
+```bash
+GET http://localhost:3000/api/articles/:slug
+```
+
+パスパラメータ：  
+
+**slug**：表示する記事のスラッグ
+
+レスポンス：  
+
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**slug** `String`：記事のスラッグ  
+**title** `String`：記事タイトル  
+**description** `String`：記事概要  
+**body** `Text`：記事本文  
+**tag_list** `Array<String>`：記事のタグの配列  
+**created_at** `DateTime`：記事が投稿された日時  
+**updated_at** `DateTime`：記事が更新された日時  
+**author** `Array<String>`：記事の投稿者情報  
+**username** `Array<String>`：記事の投稿者名  
+
+レスポンスの例：  
+
+```json
+{
+  "article": {
+    "slug": "how-to-train-your-dragon",
+    "title": "How to train your dragon",
+    "description": "Ever wonder how?",
+    "body": "You have to believe",
+    "tag_list": ["reactjs", "angularjs", "dragons"],
+    "created_at": "2024-01-07T04:39:09.152Z",
+    "updated_at": "2024-01-07T04:39:09.152Z",
+    "author": {
+      "username": "Jacob"
+    }
+  }
+}
+```
+
+エラーレスポンス：  
+
+記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "Article not found"
+  ]
+}
+```
+
+#### 2-3. 記事を更新する
+
+概要：  
+
+記事を更新するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
+また、記事の投稿者本人しか更新できません。
+
+エンドポイント：  
+
+```bash
+PUT http://localhost:3000/api/articles/:slug
+```
+
+パスパラメータ：  
+
+**slug**：更新する記事のスラッグ
+
+リクエストヘッダー：
+
+**Content-Type**： application/json  
+**Authorization**： Bearer <トークン>  
+
+リクエストボディ：
+
+以下のうち、更新したい項目をリクエストに含めてください。
+
+**title** `String`：記事タイトル  
+**description** `String`：記事概要  
+**body** `Text`：記事本文  
+**tag_list** `Array<String>`：記事につけるタグの配列  
+
+リクエストの例：  
+
+```json
+{
+  "article": {
+    "body": "With two hands"
+  }
+}
+```
+
+レスポンス：  
+
+HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**slug** `String`：更新された記事のスラッグ  
+**title** `String`：更新された記事タイトル  
+**description** `String`：更新された記事概要  
+**body** `Text`：更新された記事本文  
+**tag_list** `Array<String>`：更新された記事のタグの配列  
+**created_at** `DateTime`：記事が投稿された日時  
+**updated_at** `DateTime`：記事が更新された日時  
+**author** `Array<String>`：記事の投稿者情報  
+**username** `Array<String>`：記事の投稿者名  
+
+レスポンスの例：  
+
+```json
+{
+  "article": {
+    "slug": "how-to-train-your-dragon",
+    "title": "How to train your dragon",
+    "description": "Ever wonder how?",
+    "body": "With two hands",
+    "tag_list": ["reactjs", "angularjs", "dragons"],
+    "created_at": "2024-01-07T04:39:09.152Z",
+    "updated_at": "2024-01-07T05:20:46.744Z",
+    "author": {
+      "username": "Jacob"
+    }
+  }
+}
+```
+
+エラーレスポンス：  
+
+- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。 
+- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "Invalid token or user not found"
+  ]
+}
+```
+
+#### 2-4. 記事を削除する
+
+概要：  
+
+記事を削除するにはユーザー認証が必要です。ログイン成功時に発行されたトークンをリクエストヘッダーに含めてください。  
+また、記事の投稿者本人しか削除できません。
+
+エンドポイント：  
+
+```bash
+DELETE http://localhost:3000/api/articles/:slug
+```
+
+パスパラメータ：  
+
+**slug**：削除する記事のスラッグ
+
+レスポンス：  
+
+HTTPステータスコード `204 No Content` を返します。  
+
+エラーレスポンス：  
+
+- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。  
+- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。 
+- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。  
+
+**errors** `Array<String>`：エラーメッセージの配列  
+
+エラーレスポンスの例：  
+
+```json
+{
+  "errors": [
+    "You are not authorized to perform this action"
+  ]
+}
+```
