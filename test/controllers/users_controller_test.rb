@@ -10,7 +10,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should not create user with invalid params" do
     assert_no_difference("User.count") do
-      post api_users_url, params: { "user":{ "email":"", "password":"", "username":"" } }
+      post api_users_url, params: { "user":{ "email":"", "password":"test-password", "username":"" } }
     end
     assert_response :unprocessable_entity
   end
