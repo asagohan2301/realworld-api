@@ -48,3 +48,4 @@ end
 gem "mysql2"
 gem "bcrypt"
 gem "jwt"
+gem "rack-cors"
