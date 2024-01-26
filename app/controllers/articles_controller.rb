@@ -3,10 +3,16 @@ class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :update, :destroy]
   before_action :authenticate_article, only: [:update, :destroy]
 
+  def index
+    articles = Article.includes(:user).all
+    format_articles = articles.map { |article| format_article_response(article) }
+    render json: { articles: format_articles }, status: :ok
+  end
+
   def create
     article = @user.articles.build(article_params)
     if article.save
-      render json: format_article_response(article), status: :created
+      render json: { article: format_article_response(article) }, status: :created
     else
       render json: { errors: article.errors.full_messages }, status: :unprocessable_entity
     end
@@ -14,7 +20,7 @@ class ArticlesController < ApplicationController
 
   def show
     if @article
-      render json: format_article_response(@article), status: :ok
+      render json: { article: format_article_response(@article) }, status: :ok
     else
       render json: { errors: ["Article not found"] }, status: :not_found
     end
@@ -22,7 +28,7 @@ class ArticlesController < ApplicationController
 
   def update
     if @article.update(article_params)
-      render json: format_article_response(@article), status: :ok
+      render json: { article: format_article_response(@article) }, status: :ok
     else
       render json: { errors: @article.errors.full_messages }, status: :unprocessable_entity
     end
@@ -57,17 +63,15 @@ class ArticlesController < ApplicationController
 
     def format_article_response(article)
       {
-        article: {
-          slug: article.slug,
-          title: article.title,
-          description: article.description,
-          body: article.body,
-          tag_list: article.tag_list,
-          created_at: article.created_at,
-          updated_at: article.updated_at,
-          author: {
-            username: article.user.username
-          }
+        slug: article.slug,
+        title: article.title,
+        description: article.description,
+        body: article.body,
+        tag_list: article.tag_list,
+        created_at: article.created_at,
+        updated_at: article.updated_at,
+        author: {
+          username: article.user.username
         }
       }
     end
