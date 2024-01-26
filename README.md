@@ -53,7 +53,7 @@ POST http://localhost:3000/api/users
 
 レスポンス：
 
-HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。
+HTTP ステータスコード `201 Created` と、以下の情報を含む JSON オブジェクトを返します。
 
 **username** `String`：登録されたユーザー名  
 **email** `String`：登録されたメールアドレス
@@ -71,7 +71,7 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 
 エラーレスポンス：
 
-バリデーションエラーの際は、HTTPステータスコード `422 Unprocessable Entity` と、以下の情報を含むJSONオブジェクトを返します。
+バリデーションエラーの際は、HTTP ステータスコード `422 Unprocessable Entity` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -79,10 +79,7 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 
 ```json
 {
-  "errors": [
-    "Username can't be blank",
-    "Email can't be blank"
-  ]
+  "errors": ["Username can't be blank", "Email can't be blank"]
 }
 ```
 
@@ -95,7 +92,7 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 
 ```bash
 POST http://localhost:3000/api/users/login
-``` 
+```
 
 リクエストヘッダー：
 
@@ -119,7 +116,7 @@ POST http://localhost:3000/api/users/login
 
 レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
+HTTP ステータスコード `200 OK` と、以下の情報を含む JSON オブジェクトを返します。
 
 **username** `String`：登録済みのユーザー名  
 **email** `String`：登録済みのメールアドレス  
@@ -139,7 +136,7 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 エラーレスポンス：
 
-ログインに失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
+ログインに失敗した場合は、HTTP ステータスコード `401 Unauthorized` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -147,15 +144,68 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 ```json
 {
-  "errors": [
-    "Authentication failed"
-  ]
+  "errors": ["Authentication failed"]
 }
 ```
 
 ### 2. 記事
 
-#### 2-1. 記事を投稿する
+#### 2-1. 記事一覧を取得する
+
+エンドポイント：
+
+```bash
+GET http://localhost:3000/api/articles
+```
+
+レスポンス：
+
+HTTP ステータスコード `200 OK` と、以下の情報を含む JSON オブジェクトを返します。
+
+**slug** `String`：記事のスラッグ  
+**title** `String`：記事タイトル  
+**description** `String`：記事概要  
+**body** `Text`：記事本文  
+**tag_list** `Array<String>`：記事のタグの配列  
+**created_at** `DateTime`：記事が投稿された日時  
+**updated_at** `DateTime`：記事が更新された日時  
+**author** `Array<String>`：記事の投稿者情報  
+**username** `Array<String>`：記事の投稿者名
+
+レスポンスの例：
+
+```json
+{
+  "articles": [
+    {
+      "slug": "how-to-train-your-dragon",
+      "title": "How to train your dragon",
+      "description": "Ever wonder how?",
+      "body": "You have to believe",
+      "tag_list": ["reactjs", "angularjs", "dragons"],
+      "created_at": "2024-01-07T04:39:09.152Z",
+      "updated_at": "2024-01-07T04:39:09.152Z",
+      "author": {
+        "username": "Jacob"
+      }
+    },
+    {
+      "slug": "how-to-train-your-dragon-2",
+      "title": "How to train your dragon 2",
+      "description": "So toothless",
+      "body": "It a dragon",
+      "tag_list": ["reactjs", "angularjs", "dragons"],
+      "created_at": "2024-01-25T12:54:40.755Z",
+      "updated_at": "2024-01-25T12:54:40.755Z",
+      "author": {
+        "username": "Jacob"
+      }
+    }
+  ]
+}
+```
+
+#### 2-2. 記事を投稿する
 
 概要：
 
@@ -194,7 +244,7 @@ POST http://localhost:3000/api/articles
 
 レスポンス：
 
-HTTPステータスコード `201 Created` と、以下の情報を含むJSONオブジェクトを返します。
+HTTP ステータスコード `201 Created` と、以下の情報を含む JSON オブジェクトを返します。
 
 **slug** `String`：投稿された記事のスラッグ  
 **title** `String`：投稿された記事タイトル  
@@ -227,7 +277,7 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 
 エラーレスポンス：
 
-ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
+ユーザー認証に失敗した場合は、HTTP ステータスコード `401 Unauthorized` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -235,13 +285,11 @@ HTTPステータスコード `201 Created` と、以下の情報を含むJSONオ
 
 ```json
 {
-  "errors": [
-    "Invalid token or user not found"
-  ]
+  "errors": ["Invalid token or user not found"]
 }
 ```
 
-#### 2-2. 記事を取得する
+#### 2-3. 記事を取得する
 
 エンドポイント：
 
@@ -255,7 +303,7 @@ GET http://localhost:3000/api/articles/:slug
 
 レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
+HTTP ステータスコード `200 OK` と、以下の情報を含む JSON オブジェクトを返します。
 
 **slug** `String`：記事のスラッグ  
 **title** `String`：記事タイトル  
@@ -288,7 +336,7 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 エラーレスポンス：
 
-記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
+記事が見つからなかった場合は、HTTP ステータスコード `404 Not Found` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -296,13 +344,11 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 ```json
 {
-  "errors": [
-    "Article not found"
-  ]
+  "errors": ["Article not found"]
 }
 ```
 
-#### 2-3. 記事を更新する
+#### 2-4. 記事を更新する
 
 概要：
 
@@ -345,7 +391,7 @@ PUT http://localhost:3000/api/articles/:slug
 
 レスポンス：
 
-HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブジェクトを返します。
+HTTP ステータスコード `200 OK` と、以下の情報を含む JSON オブジェクトを返します。
 
 **slug** `String`：更新された記事のスラッグ  
 **title** `String`：更新された記事タイトル  
@@ -378,9 +424,9 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 エラーレスポンス：
 
-- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
-- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
-- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。
+- ユーザー認証に失敗した場合は、HTTP ステータスコード `401 Unauthorized` と、以下の情報を含む JSON オブジェクトを返します。
+- 記事が見つからなかった場合は、HTTP ステータスコード `404 Not Found` と、以下の情報を含む JSON オブジェクトを返します。
+- 記事の投稿者でない場合は、HTTP ステータスコード `403 Forbidden` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -388,13 +434,11 @@ HTTPステータスコード `200 OK` と、以下の情報を含むJSONオブ�
 
 ```json
 {
-  "errors": [
-    "Invalid token or user not found"
-  ]
+  "errors": ["Invalid token or user not found"]
 }
 ```
 
-#### 2-4. 記事を削除する
+#### 2-5. 記事を削除する
 
 概要：
 
@@ -417,13 +461,13 @@ DELETE http://localhost:3000/api/articles/:slug
 
 レスポンス：
 
-HTTPステータスコード `204 No Content` を返します。
+HTTP ステータスコード `204 No Content` を返します。
 
 エラーレスポンス：
 
-- ユーザー認証に失敗した場合は、HTTPステータスコード `401 Unauthorized` と、以下の情報を含むJSONオブジェクトを返します。
-- 記事が見つからなかった場合は、HTTPステータスコード `404 Not Found` と、以下の情報を含むJSONオブジェクトを返します。
-- 記事の投稿者でない場合は、HTTPステータスコード `403 Forbidden` と、以下の情報を含むJSONオブジェクトを返します。
+- ユーザー認証に失敗した場合は、HTTP ステータスコード `401 Unauthorized` と、以下の情報を含む JSON オブジェクトを返します。
+- 記事が見つからなかった場合は、HTTP ステータスコード `404 Not Found` と、以下の情報を含む JSON オブジェクトを返します。
+- 記事の投稿者でない場合は、HTTP ステータスコード `403 Forbidden` と、以下の情報を含む JSON オブジェクトを返します。
 
 **errors** `Array<String>`：エラーメッセージの配列
 
@@ -431,8 +475,6 @@ HTTPステータスコード `204 No Content` を返します。
 
 ```json
 {
-  "errors": [
-    "You are not authorized to perform this action"
-  ]
+  "errors": ["You are not authorized to perform this action"]
 }
 ```
