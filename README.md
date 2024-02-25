@@ -5,6 +5,13 @@
 ブログプラットフォームを作る [RealWorld](https://github.com/gothinkster/realworld/tree/main) という OSS のプロジェクトがあります。  
 本リポジトリは、[RealWorld の バックエンドの API](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction) の仕様を Rails で作成したものです。
 
+## デプロイ
+
+フロントエンド：[https://asagohan.click/](https://asagohan.click/)  
+バックエンド：[https://asagohan.net/](https://asagohan.net/)
+
+![alt text](/images/architecture.jpg)
+
 ## 機能
 
 ### 実装済み
