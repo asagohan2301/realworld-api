@@ -7,4 +7,7 @@ Rails.application.routes.draw do
   get "/api/articles/:slug", to: "articles#show"
   put "api/articles/:slug", to: "articles#update"
   delete "/api/articles/:slug", to: "articles#destroy"
+
+  root to: "home#index"
+  match "*path", to: "application#not_found", via: :all
 end
