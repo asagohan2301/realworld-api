@@ -2,7 +2,7 @@
 /.bundle
 
 # Ignore the specific database config file.
-/config/database.yml
+# /config/database.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
@@ -36,3 +36,7 @@ doc/
 
 # Ignore precompiled assets for production environment
 /public/assets
+
+/config/credentials/development.key
+
+/config/credentials/production.key
