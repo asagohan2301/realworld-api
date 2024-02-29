@@ -7,8 +7,8 @@
 
 ## デプロイ
 
-フロントエンド：[https://asagohan.click/](https://asagohan.click/)  
-バックエンド：[https://asagohan.net/](https://asagohan.net/)
+バックエンドを AWS、フロントエンドを Vercel にデプロイしていました。  
+現在は削除済みです。
 
 ![alt text](/images/architecture.jpg)
 
